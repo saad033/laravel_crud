@@ -44,8 +44,8 @@
                         <div>
 
                             <select name="customer_id" class="h-12 px-3 w-full border-gray-200 border rounded focus:outline-none focus:border-gray-300">
-                                @foreach($customers as $custom)
-                                    <option value="{{ $custom->id }}">{{ $custom->id }}</option>
+                                @foreach($customers as $customer)
+                                    <option value="{{ $customer->id }}">{{ $customer->id }}</option>
                                 @endforeach
                             </select>
 

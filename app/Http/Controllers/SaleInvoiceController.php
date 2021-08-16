@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Product;
+use App\Models\Customer;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Cart;
 class SaleInvoiceController extends Controller
 {
     /**
@@ -14,6 +18,7 @@ class SaleInvoiceController extends Controller
     public function index()
     {
         //
+        return view('livewire.salesInvoice');
     }
 
     /**
@@ -21,9 +26,20 @@ class SaleInvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
         //
+//        $saleInvoice = DB::table('products')->get();
+//
+//        $customerInfo = DB::table('customers')->get();
+
+        $data = DB::table('products')
+            ->join('customers','customers.id','=','products.product_id')
+            ->where('product_id',$id)
+            ->get();
+
+//        return view('livewire.salesInvoice',['saleInvoice'=>$saleInvoice,'customerInfo'=>$customerInfo]);
+        return view('livewire.Invoice',['data'=>$data]);
     }
 
     /**
@@ -35,6 +51,8 @@ class SaleInvoiceController extends Controller
     public function store(Request $request)
     {
         //
+        dd($request->all());
+
     }
 
     /**

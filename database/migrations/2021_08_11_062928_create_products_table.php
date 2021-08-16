@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('short_description')->nullable();
             $table->decimal('sale_price')->nullable();
             $table->unsignedInteger('quantity')->default(10);
-            $table->string('image')->nullable();
+//            $table->string('image')->nullable();
             $table->text('images')->nullable();
             $table->foreignId('product_id')->references('id')->on('customers')->onDelete(`cascade`);
             $table->timestamps();

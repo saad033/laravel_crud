@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Product;
+use App\Models\Customer;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -14,6 +17,8 @@ class ProductController extends Controller
     public function index()
     {
         //
+        return view ('livewire.products');
+
     }
 
     /**
@@ -21,9 +26,15 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(Request $request){
+        $customers = DB::table('customers')->get();
+           $product = DB::table('products')->get();
+
+        return view('livewire.products',compact('customers'));
+
+
+
+
     }
 
     /**
@@ -35,6 +46,37 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
+//        dd($request->all());
+        $request->validate([
+            'product_name'=>'required',
+            'short_description'=>'required',
+            'sale_price'=>'required',
+            'quantity'=>'required',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+
+        ]);
+
+        $product = new Product();
+        $product->product_name = $request->product_name;
+        $product->short_description = $request->short_description;
+        $product->sale_price = $request->sale_price;
+
+        $product->quantity = $request->quantity;
+
+            /* File Loaded and Moved into the folder uploads/images */
+        if($request->file()) {
+            $fileName = time() . '_' . $request->file->getClientOriginalName();
+            $filePath = $request->file('file')->storeAs('/uploads/images', $fileName, 'public');
+            $request->file->move(public_path('images'), $fileName);
+
+            $product->images = $filePath;
+
+
+            $product->product_id = $request->customer_id;
+            $product->save();
+            return redirect(route('dashboard'))->with('status', 'Record Added');
+        }
+
     }
 
     /**
@@ -54,9 +96,19 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function edit($id)
     {
         //
+
+        return view('livewire.edit',['data'=>$data]);
+        $data = DB::table('products')
+            ->join('customers','customers.id','=','products.product_id')
+            ->where('product_id',$id)
+            ->get();
+        dd($data);
+        return view('livewire.edit',['data'=>$data]);
+
     }
 
     /**
@@ -69,6 +121,19 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         //
+//          dd($request->all());
+        $product = Product::find($id);
+
+        $product = new Product();
+//        dd($product);
+        $product->product_name = $request->product_name;
+        $product->short_description =$request->short_description;
+        $product->sale_price = $request->sale_price;
+        $product->quantity = $request->quantity;
+//        $product->product_id = $request->id;
+        $product->save($request->all());
+
+        return redirect(route('dashboard'))->with('status','Record Updated');
     }
 
     /**

@@ -13,10 +13,16 @@ class DashboardController extends Controller
     //
     public function showPost()
     {
-        $saleInvoice = DB::table('products')->get();
+//        $products = DB::table('products')->get();
+//
+//        $customerInfo = DB::table('customers')->get();
+        $data = DB::table('products')
+            ->join('customers','customers.id','=','products.product_id')
+           ->get();
+//  dd($data);
 
-        $customerInfo = DB::table('customers')->get();
-
-        return view('livewire.dashboard',['saleInvoice'=>$saleInvoice,'customerInfo'=>$customerInfo]);
+        return view('livewire.dashboard',['data'=>$data]);
     }
+
+
 }
